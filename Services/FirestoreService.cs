@@ -1,7 +1,9 @@
 ﻿using Google.Cloud.Firestore;
+using Google.Cloud.Firestore.V1;
 using mailchimp_firebase_sync.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,7 +18,11 @@ namespace mailchimp_firebase_sync.Services
         {
             try
             {
-                _db = FirestoreDb.Create("c4k-events");
+                var firestoreClientBuilder = new FirestoreClientBuilder
+                {
+                    CredentialsPath = @$"{Directory.GetCurrentDirectory()}\c4k-events-credentials.json"
+                };
+                _db = FirestoreDb.Create("c4k-events", firestoreClientBuilder.Build());
                 _collection = _db.Collection("members");
             }
             catch (Exception ex)
