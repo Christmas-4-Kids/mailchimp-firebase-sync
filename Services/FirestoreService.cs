@@ -88,6 +88,7 @@ namespace mailchimp_firebase_sync.Services
                     try
                     {
                         var snapshot = await docRef.GetSnapshotAsync();
+                        _logger.LogInformation($"converting snapshot: {snapshot.ToDictionary()}");
                         var firestoreMember = snapshot.ConvertTo<FirestoreMember>();
                         firestoreMemberList.Add(firestoreMember);
                     }
@@ -97,8 +98,8 @@ namespace mailchimp_firebase_sync.Services
                         _logger.LogError(JsonConvert.SerializeObject(ex));
                         continue;
                     }
-                    
                 }
+                _logger.LogInformation("Finished getting all firestore members.");
                 return firestoreMemberList;
             }
             catch (Exception ex)
