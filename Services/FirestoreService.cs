@@ -67,7 +67,7 @@ namespace mailchimp_firebase_sync.Services
 
         public async Task CreateMultipleMembersAsync(IEnumerable<MailchimpMember> mailchimpMemberList)
         {
-            _logger.LogInformation($"Creating {mailchimpMemberList.Count()} members: {JsonConvert.SerializeObject(mailchimpMemberList)}");
+            _logger.LogInformation($"Creating {mailchimpMemberList.Count()} members.");
             foreach (var mailchimpMember in mailchimpMemberList)
             {
                 await CreateMemberAsync(mailchimpMember);
@@ -141,7 +141,7 @@ namespace mailchimp_firebase_sync.Services
 
         public async Task RemoveMailchimpInfoForMultipleMembersAsync(List<string> membersToRemoveMailchimpInfo)
         {
-            _logger.LogInformation($"Removing {membersToRemoveMailchimpInfo.Count()} members: {JsonConvert.SerializeObject(membersToRemoveMailchimpInfo)}");
+            _logger.LogInformation($"Removing {membersToRemoveMailchimpInfo.Count()} members.");
             foreach (var memberToRemove in membersToRemoveMailchimpInfo)
             {
                 var query = _collection.WhereEqualTo("MailchimpMemberId", memberToRemove);
@@ -155,7 +155,7 @@ namespace mailchimp_firebase_sync.Services
 
         public async Task UpdateMultipleMembersAsync(List<MailchimpMember> membersToUpdate)
         {
-            _logger.LogInformation($"Updating {membersToUpdate.Count()} members: {JsonConvert.SerializeObject(membersToUpdate)}");
+            _logger.LogInformation($"Updating {membersToUpdate.Count()} members.");
             foreach (var memberToUpdate in membersToUpdate)
             {
                 var query = _collection.WhereEqualTo("MailchimpMemberId", memberToUpdate.Id);
