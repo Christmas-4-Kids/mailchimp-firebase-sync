@@ -1,28 +1,47 @@
-# ASP.NET Core
-- task: AzureRmWebAppDeployment@4
-  inputs:
-    ConnectionType: 'AzureRM'
-    azureSubscription: 'c4k-sync - Azure'
-    appType: 'webApp'
-    WebAppName: 'c4k-sync'
-    deployToSlotOrASE: true
-    ResourceGroupName: 'c4k'
-    SlotName: 'production'
-    packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
-    JSONFiles: '**/appsettings.json'
-# Build and test ASP.NET Core projects targeting .NET Core.
-# Add steps that run tests, create a NuGet package, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
-
+resources:
+- repo: self
+  fetchDepth: 1
 trigger:
-- master
-
-pool:
-  vmImage: 'ubuntu-latest'
-
+- testing
 variables:
-  buildConfiguration: 'Release'
-
-steps:
-- script: dotnet build --configuration $(buildConfiguration)
-  displayName: 'dotnet build $(buildConfiguration)'
+  artifactName: 'mailchimp-firebase-sync'
+jobs:
+- job: Build
+  displayName: Build application
+  condition: succeeded()
+  pool:
+    vmImage: vs2017-win2016
+    demands:
+    - msbuild
+    - visualstudio
+  variables:
+    solution: 'mailchimp-firebase-sync.sln'
+    buildPlatform: 'Any CPU'
+    buildConfiguration: 'Release'
+  steps:
+  - task: NuGetToolInstaller@0
+    displayName: 'Use NuGet 4.4.1'
+    inputs:
+      versionSpec: 4.4.1
+  - task: NuGetCommand@2
+    displayName: 'NuGet restore'
+    inputs:
+      restoreSolution: '$(solution)'
+  - task: VSBuild@1
+    displayName: 'Build solution'
+    inputs:
+      solution: '$(solution)'
+      msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactstagingdirectory)\\"'
+      platform: '$(buildPlatform)'
+      configuration: '$(buildConfiguration)'
+  - task: PublishSymbols@2
+    displayName: 'Publish symbols path'
+    continueOnError: true
+    inputs:
+      SearchPattern: '**\bin\**\*.pdb'
+      PublishSymbols: false
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact'
+    inputs:
+      PathtoPublish: '$(build.artifactstagingdirectory)/mailchimp-firebase-sync.zip'
+      ArtifactName: '$(artifactName)'
