@@ -78,11 +78,11 @@ namespace mailchimp_firebase_sync.Services
         {
             try
             {
-                _logger.LogInformation($"Getting all firestore members from collection: {JsonConvert.SerializeObject(_collection)}");
+                _logger.LogInformation($"Getting all firestore members from collection...");
                 var firestoreMemberList = new List<FirestoreMember>();
                 var docs = _collection.ListDocumentsAsync();
                 var docRefList = await docs.ToList();
-                _logger.LogInformation($"Got docRefList from collection: {JsonConvert.SerializeObject(_collection)}");
+                _logger.LogInformation($"Got docRefList from collection.");
                 foreach (var docRef in docRefList)
                 {
                     try
