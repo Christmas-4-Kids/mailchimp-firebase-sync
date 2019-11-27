@@ -1,6 +1,8 @@
 ﻿using Google.Cloud.Firestore;
 using Google.Cloud.Firestore.V1;
 using mailchimp_firebase_sync.Models;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,11 +15,14 @@ namespace mailchimp_firebase_sync.Services
     {
         private readonly FirestoreDb _db;
         private readonly CollectionReference _collection;
+        private ILogger<FirestoreService> _logger;
 
-        public FirestoreService()
+        public FirestoreService(ILogger<FirestoreService> logger)
         {
+            _logger = logger;
             try
             {
+                _logger.LogInformation("Setting firestore credentials and getting initial collection...");
                 var firestoreClientBuilder = new FirestoreClientBuilder
                 {
                     CredentialsPath = @$"{Directory.GetCurrentDirectory()}\c4k-events-credentials.json"
@@ -27,6 +32,8 @@ namespace mailchimp_firebase_sync.Services
             }
             catch (Exception ex)
             {
+                _logger.LogError("Something went wrong setting firestore credentials or getting firestore collection.");
+                _logger.LogError(JsonConvert.SerializeObject(ex));
                 Console.WriteLine(ex);
             }
 
@@ -60,6 +67,7 @@ namespace mailchimp_firebase_sync.Services
 
         public async Task CreateMultipleMembersAsync(IEnumerable<MailchimpMember> mailchimpMemberList)
         {
+            _logger.LogInformation($"Creating {mailchimpMemberList.Count()} members: {JsonConvert.SerializeObject(mailchimpMemberList)}");
             foreach (var mailchimpMember in mailchimpMemberList)
             {
                 await CreateMemberAsync(mailchimpMember);
@@ -112,6 +120,7 @@ namespace mailchimp_firebase_sync.Services
 
         public async Task RemoveMailchimpInfoForMultipleMembersAsync(List<string> membersToRemoveMailchimpInfo)
         {
+            _logger.LogInformation($"Removing {membersToRemoveMailchimpInfo.Count()} members: {JsonConvert.SerializeObject(membersToRemoveMailchimpInfo)}");
             foreach (var memberToRemove in membersToRemoveMailchimpInfo)
             {
                 var query = _collection.WhereEqualTo("MailchimpMemberId", memberToRemove);
@@ -125,6 +134,7 @@ namespace mailchimp_firebase_sync.Services
 
         public async Task UpdateMultipleMembersAsync(List<MailchimpMember> membersToUpdate)
         {
+            _logger.LogInformation($"Updating {membersToUpdate.Count()} members: {JsonConvert.SerializeObject(membersToUpdate)}");
             foreach (var memberToUpdate in membersToUpdate)
             {
                 var query = _collection.WhereEqualTo("MailchimpMemberId", memberToUpdate.Id);

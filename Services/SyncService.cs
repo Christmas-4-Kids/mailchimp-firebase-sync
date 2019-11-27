@@ -1,4 +1,5 @@
 ﻿using mailchimp_firebase_sync.Models;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,16 +11,19 @@ namespace mailchimp_firebase_sync.Services
     {
         private readonly IMailchimpService _mailchimpService;
         private readonly IFirestoreService _firestoreService;
+        private readonly ILogger<SyncService> _logger;
 
-        public SyncService(IMailchimpService mailchimpService, IFirestoreService firestoreService)
+        public SyncService(IMailchimpService mailchimpService, IFirestoreService firestoreService, ILogger<SyncService> logger)
         {
             _mailchimpService = mailchimpService;
             _firestoreService = firestoreService;
+            _logger = logger;
         }
         public async Task SyncMailchimpMembersWithFirestoreAsync()
         {
             try
             {
+                _logger.LogInformation("Starting Sync...");
                 var allDayChaperones = await _mailchimpService.GetAllDayChaperones();
                 var firestoreMembers = await _firestoreService.GetAllFirestoreMembersAsync();
 

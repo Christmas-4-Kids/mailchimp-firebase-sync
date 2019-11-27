@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace mailchimp_firebase_sync
 {
@@ -14,6 +15,10 @@ namespace mailchimp_firebase_sync
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    webBuilder.ConfigureLogging(logging =>
+                    {
+                        logging.AddAzureWebAppDiagnostics();
+                    });
                     webBuilder.UseStartup<Startup>();
                 });
     }
