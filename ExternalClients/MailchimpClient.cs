@@ -50,7 +50,7 @@ namespace mailchimp_firebase_sync.ExternalClients
                 var result = await _httpClient.GetAsync(allDayChaperonesUrl);
                 result.EnsureSuccessStatusCode();
                 var strResult = await result.Content.ReadAsStringAsync();
-                _logger.LogInformation($"Got allDayChaperones: {strResult}");
+                _logger.LogInformation($"Got allDayChaperones.");
                 _logger.LogInformation($"Converting to MailchimpMembers and returning...");
                 return JsonConvert.DeserializeObject<MailchimpMembers>(strResult, _snakeCaseSerializer);
             }

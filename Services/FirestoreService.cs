@@ -76,16 +76,37 @@ namespace mailchimp_firebase_sync.Services
 
         public async Task<List<FirestoreMember>> GetAllFirestoreMembersAsync()
         {
-            var firestoreMemberList = new List<FirestoreMember>();
-            var docs = _collection.ListDocumentsAsync();
-            var docRefList = await docs.ToList();
-            foreach (var docRef in docRefList)
+            try
             {
-                var snapshot = await docRef.GetSnapshotAsync();
-                var firestoreMember = snapshot.ConvertTo<FirestoreMember>();
-                firestoreMemberList.Add(firestoreMember);
+                _logger.LogInformation($"Getting all firestore members from collection: {JsonConvert.SerializeObject(_collection)}");
+                var firestoreMemberList = new List<FirestoreMember>();
+                var docs = _collection.ListDocumentsAsync();
+                var docRefList = await docs.ToList();
+                _logger.LogInformation($"Got docRefList from collection: {JsonConvert.SerializeObject(_collection)}");
+                foreach (var docRef in docRefList)
+                {
+                    try
+                    {
+                        var snapshot = await docRef.GetSnapshotAsync();
+                        var firestoreMember = snapshot.ConvertTo<FirestoreMember>();
+                        firestoreMemberList.Add(firestoreMember);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError($"Failed to convert to firestore member.");
+                        _logger.LogError(JsonConvert.SerializeObject(ex));
+                        continue;
+                    }
+                    
+                }
+                return firestoreMemberList;
             }
-            return firestoreMemberList;
+            catch (Exception ex)
+            {
+                _logger.LogError($"Something went wrong getting all firestore members from collection: {JsonConvert.SerializeObject(ex)}");
+                return null;
+            }
+            
         }
 
         public async Task<FirestoreMember> GetMemberByEmailAndPhoneAsync(string email, string phone)
