@@ -12,17 +12,22 @@ namespace mailchimp_firebase_sync
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration, ILogger<Startup> logger)
+        public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            Logger = logger;
         }
-        public ILogger Logger { get; }
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddLogging(config =>
+            {
+                config.AddDebug();
+                config.AddConsole();
+                config.AddAzureWebAppDiagnostics();
+            });
+
             services.Configure<ExternalClientsConfig>(Configuration.GetSection("ExternalClients"));
 
             services.AddHttpClient<IMailchimpClient, MailchimpClient>();
