@@ -1,5 +1,6 @@
 ﻿using mailchimp_firebase_sync.Models;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,11 +45,13 @@ namespace mailchimp_firebase_sync.Services
                         var lastUpdatedInFirestore = DateTime.Parse(matchingFirestoreMember.LastUpdated);
                         if (lastUpdatedInMailchimp > lastUpdatedInFirestore)
                         {
+                            _logger.LogInformation($"Found mailchimp member to update: {allDayChaperone.Id}");
                             membersToUpdate.Add(allDayChaperone);
                         }
                     }
                     else
                     {
+                        _logger.LogInformation($"Found mailchimp member to add: {allDayChaperone.Id}");
                         membersToAdd.Add(allDayChaperone);
                     }
                 }
@@ -62,7 +65,8 @@ namespace mailchimp_firebase_sync.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                _logger.LogError($"Something went wrong in the sync process: {ex.Message}");
+                _logger.LogError(JsonConvert.SerializeObject(ex));
             }
         }
     }
