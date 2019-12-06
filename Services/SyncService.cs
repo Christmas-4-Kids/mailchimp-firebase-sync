@@ -33,29 +33,29 @@ namespace mailchimp_firebase_sync.Services
                 var membersToRemoveMailchimpInfo = new List<string>();
                 var firestoreMemberMailchimpMemberIdsFound = new List<string>();
 
-                foreach (var allDayChaperone in allDayChaperones.Members)
+                foreach (var allDayChaperone in allDayChaperones.members)
                 {
-                    var lastUpdatedInMailchimp = DateTime.Parse(allDayChaperone.LastChanged);
+                    var lastUpdatedInMailchimp = DateTime.Parse(allDayChaperone.lastChanged);
 
-                    var matchingFirestoreMember = firestoreMembers.FirstOrDefault(m => m.MailchimpMemberId == allDayChaperone.Id);
+                    var matchingFirestoreMember = firestoreMembers.FirstOrDefault(m => m.mailchimpMemberId == allDayChaperone.id);
 
                     if (matchingFirestoreMember != null)
                     {
-                        firestoreMemberMailchimpMemberIdsFound.Add(matchingFirestoreMember.MailchimpMemberId);
-                        var lastUpdatedInFirestore = DateTime.Parse(matchingFirestoreMember.LastUpdated);
+                        firestoreMemberMailchimpMemberIdsFound.Add(matchingFirestoreMember.mailchimpMemberId);
+                        var lastUpdatedInFirestore = DateTime.Parse(matchingFirestoreMember.lastUpdated);
                         if (lastUpdatedInMailchimp > lastUpdatedInFirestore)
                         {
-                            _logger.LogInformation($"Found mailchimp member to update: {allDayChaperone.Id}");
+                            _logger.LogInformation($"Found mailchimp member to update: {allDayChaperone.id}");
                             membersToUpdate.Add(allDayChaperone);
                         }
                     }
                     else
                     {
-                        _logger.LogInformation($"Found mailchimp member to add: {allDayChaperone.Id}");
+                        _logger.LogInformation($"Found mailchimp member to add: {allDayChaperone.id}");
                         membersToAdd.Add(allDayChaperone);
                     }
                 }
-                var existingFirestoreMailchimpMemberIds = firestoreMembers.Select(m => m.MailchimpMemberId).ToList();
+                var existingFirestoreMailchimpMemberIds = firestoreMembers.Select(m => m.mailchimpMemberId).ToList();
                 var mailchimpMembersExistingInFirestoreNotInMailchimp = firestoreMemberMailchimpMemberIdsFound.Except(existingFirestoreMailchimpMemberIds).ToList();
                 membersToRemoveMailchimpInfo.AddRange(mailchimpMembersExistingInFirestoreNotInMailchimp);
 

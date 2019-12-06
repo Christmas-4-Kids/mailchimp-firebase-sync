@@ -10,44 +10,44 @@ namespace mailchimp_firebase_sync.Models
     public class MailchimpMember 
     {
         [FirestoreProperty]
-        public string Id { get; set; }
+        public string id { get; set; }
         [FirestoreProperty]
-        public string EmailAddress { get; set; }
+        public string emailAddress { get; set; }
         [FirestoreProperty]
-        public string UniqueEmailId { get; set; }
+        public string uniqueEmailId { get; set; }
         [FirestoreProperty]
-        public int WebId { get; set; }
+        public int webId { get; set; }
         [FirestoreProperty]
-        public string EmailType { get; set; }
+        public string emailType { get; set; }
         [FirestoreProperty]
-        public string Status { get; set; }
+        public string status { get; set; }
         [FirestoreProperty]
-        public MailchimpMergeFields MergeFields { get; set; }
+        public MailchimpMergeFields mergeFields { get; set; }
         [FirestoreProperty]
-        public string TimestampSignup { get; set; }
+        public string timestampSignup { get; set; }
         [FirestoreProperty]
-        public string IpOpt { get; set; }
+        public string ipOpt { get; set; }
         [FirestoreProperty]
-        public string TimestampOpt { get; set; }
+        public string timestampOpt { get; set; }
         [FirestoreProperty]
-        public string MemberRating { get; set; }
+        public string memberRating { get; set; }
         [FirestoreProperty]
-        public string LastChanged { get; set; }
+        public string lastChanged { get; set; }
         [FirestoreProperty]
-        public string Language { get; set; }
+        public string language { get; set; }
         [FirestoreProperty]
         [JsonConverter(typeof(BooleanJsonConverter))]
-        public bool Vip { get; set; }
+        public bool vip { get; set; }
         [FirestoreProperty]
-        public string EmailClient { get; set; }
+        public string emailClient { get; set; }
         [FirestoreProperty]
-        public string ListId { get; set; }
+        public string listId { get; set; }
     }
 
     public class MailchimpMembers
     {
-        public IEnumerable<MailchimpMember> Members { get; set; }
-        public string ListId { get; set; }
-        public int TotalItems { get; set; }
+        public IEnumerable<MailchimpMember> members { get; set; }
+        public string listId { get; set; }
+        public int totalItems { get; set; }
     }
 }

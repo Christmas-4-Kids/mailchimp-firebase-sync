@@ -6,16 +6,16 @@ namespace mailchimp_firebase_sync.Models
     public class Address
     {
         [FirestoreProperty]
-        public string Addr1 { get; set; }
+        public string addr1 { get; set; }
         [FirestoreProperty]
-        public string Addr2 { get; set; }
+        public string addr2 { get; set; }
         [FirestoreProperty]
-        public string City { get; set; }
+        public string city { get; set; }
         [FirestoreProperty]
-        public string State { get; set; }
+        public string state { get; set; }
         [FirestoreProperty]
-        public string Zip { get; set; }
+        public string zip { get; set; }
         [FirestoreProperty]
-        public string Country { get; set; }
+        public string country { get; set; }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Google.Cloud.Firestore;
-using System;
 
 namespace mailchimp_firebase_sync.Models
 {
@@ -7,26 +6,30 @@ namespace mailchimp_firebase_sync.Models
     public class FirestoreMember
     {
         [FirestoreProperty]
-        public string Id { get; set; }
+        public string id { get; set; }
         [FirestoreProperty]
-        public string MailchimpMemberId { get; set; }
+        public string mailchimpMemberId { get; set; }
         [FirestoreProperty]
-        public string Email { get; set; }
+        public string email { get; set; }
         [FirestoreProperty]
-        public string LastUpdated { get; set; }
+        public string emailLower { get; set; }
         [FirestoreProperty]
-        public string FirstName { get; set; }
+        public string lastUpdated { get; set; }
         [FirestoreProperty]
-        public string LastName { get; set; }
+        public string firstName { get; set; }
         [FirestoreProperty]
-        public string Phone { get; set; }
+        public string lastName { get; set; }
         [FirestoreProperty]
-        public DriversLicense DriversLicense { get; set; }
+        public string lastNameLower { get; set; }
         [FirestoreProperty]
-        public bool CheckedIn { get; set; }
+        public string phone { get; set; }
         [FirestoreProperty]
-        public bool Verified { get; set; }
+        public DriversLicense driversLicense { get; set; }
         [FirestoreProperty]
-        public MailchimpMember MailchimpMemberInfo { get; set; }
+        public bool checkedIn { get; set; }
+        [FirestoreProperty]
+        public bool verified { get; set; }
+        [FirestoreProperty]
+        public MailchimpMember mailchimpMemberInfo { get; set; }
     }
 }

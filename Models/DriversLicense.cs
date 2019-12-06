@@ -6,26 +6,26 @@ namespace mailchimp_firebase_sync.Models
     public class DriversLicense
     {
         [FirestoreProperty]
-        public string Number { get; set; }
+        public string number { get; set; }
         [FirestoreProperty]
-        public string FirstName { get; set; }
+        public string firstName { get; set; }
         [FirestoreProperty]
-        public string LastName { get; set; }
+        public string lastName { get; set; }
         [FirestoreProperty]
-        public Address Address { get; set; }
+        public string address { get; set; }
         [FirestoreProperty]
-        public string DateOfBirth { get; set; }
+        public string dateOfBirth { get; set; }
         [FirestoreProperty]
-        public string ExpirationDate { get; set; }
+        public string expirationDate { get; set; }
         [FirestoreProperty]
-        public bool IsValid { get; set; }
+        public bool isValid { get; set; }
         [FirestoreProperty]
-        public string Gender { get; set; }
+        public string gender { get; set; }
         [FirestoreProperty]
-        public string Height { get; set; }
+        public string height { get; set; }
         [FirestoreProperty]
-        public string EyeColor { get; set; }
+        public string eyeColor { get; set; }
         [FirestoreProperty]
-        public string IssueDate { get; set; }
+        public string issueDate { get; set; }
     }
 }

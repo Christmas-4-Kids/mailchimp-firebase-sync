@@ -8,33 +8,33 @@ namespace mailchimp_firebase_sync.Models
     public class MailchimpMergeFields
     {
         [FirestoreProperty]
-        public string Fname { get; set; }
+        public string fname { get; set; }
         [FirestoreProperty]
-        public string Lname { get; set; }
+        public string lname { get; set; }
         [FirestoreProperty]
-        public Address Address { get; set; }
+        public Address address { get; set; }
         [FirestoreProperty]
-        public string Phone { get; set; }
+        public string phone { get; set; }
         [FirestoreProperty]
-        public string Driver { get; set; }
+        public string driver { get; set; }
         [FirestoreProperty]
-        public string Medical { get; set; }
-        [FirestoreProperty]
-        [JsonConverter(typeof(BooleanJsonConverter))]
-        public bool Espanol { get; set; }
+        public string medical { get; set; }
         [FirestoreProperty]
         [JsonConverter(typeof(BooleanJsonConverter))]
-        public bool Prevexp { get; set; }
+        public bool espanol { get; set; }
         [FirestoreProperty]
         [JsonConverter(typeof(BooleanJsonConverter))]
-        public bool Bgcheck { get; set; }
+        public bool prevexp { get; set; }
         [FirestoreProperty]
         [JsonConverter(typeof(BooleanJsonConverter))]
-        public bool Idcheck { get; set; }
+        public bool bgcheck { get; set; }
         [FirestoreProperty]
         [JsonConverter(typeof(BooleanJsonConverter))]
-        public bool Over18 { get; set; }
+        public bool idcheck { get; set; }
         [FirestoreProperty]
-        public string Comments { get; set; }
+        [JsonConverter(typeof(BooleanJsonConverter))]
+        public bool over18 { get; set; }
+        [FirestoreProperty]
+        public string comments { get; set; }
     }
 }

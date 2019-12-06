@@ -42,17 +42,19 @@ namespace mailchimp_firebase_sync.Services
         {
             var firestoreMember = new FirestoreMember()
             {
-                Id = Guid.NewGuid().ToString(),
-                CheckedIn = false,
-                Verified = false,
-                Email = mailchimpMember.EmailAddress,
-                FirstName = mailchimpMember.MergeFields.Fname,
-                LastName = mailchimpMember.MergeFields.Lname,
-                MailchimpMemberId = mailchimpMember.Id,
-                MailchimpMemberInfo = mailchimpMember,
-                Phone = mailchimpMember.MergeFields.Phone,
-                LastUpdated = DateTime.Now.ToString(),
-                DriversLicense = null
+                id = Guid.NewGuid().ToString(),
+                checkedIn = false,
+                verified = false,
+                email = mailchimpMember.emailAddress.Trim(),
+                emailLower = mailchimpMember.emailAddress.ToLower().Trim(),
+                firstName = mailchimpMember.mergeFields.fname.Trim(),
+                lastName = mailchimpMember.mergeFields.lname.Trim(),
+                lastNameLower = mailchimpMember.mergeFields.lname.ToLower().Trim(),
+                mailchimpMemberId = mailchimpMember.id,
+                mailchimpMemberInfo = mailchimpMember,
+                phone = mailchimpMember.mergeFields.phone.Trim(),
+                lastUpdated = DateTime.Now.ToString(),
+                driversLicense = null
             };
             try
             {
@@ -126,7 +128,7 @@ namespace mailchimp_firebase_sync.Services
                     continue;
                 }
             }
-            var member = foundFirestoreMembers.FirstOrDefault(m => m.Phone == phone);
+            var member = foundFirestoreMembers.FirstOrDefault(m => m.phone == phone);
             return member;
         }
 
@@ -146,9 +148,10 @@ namespace mailchimp_firebase_sync.Services
             {
                 var query = _collection.WhereEqualTo("MailchimpMemberId", memberToRemove);
                 var querySnapshot = await query.GetSnapshotAsync();
+                var docId = querySnapshot.Documents.FirstOrDefault().Id;
                 var firestoreMember = querySnapshot.Documents.FirstOrDefault().ConvertTo<FirestoreMember>();
-                firestoreMember.MailchimpMemberInfo = null;
-                var docRef = _collection.Document(firestoreMember.Id);
+                firestoreMember.mailchimpMemberInfo = null;
+                var docRef = _collection.Document(docId);
                 await docRef.SetAsync(firestoreMember, SetOptions.Overwrite);
             }
         }
@@ -158,11 +161,12 @@ namespace mailchimp_firebase_sync.Services
             _logger.LogInformation($"Updating {membersToUpdate.Count()} members.");
             foreach (var memberToUpdate in membersToUpdate)
             {
-                var query = _collection.WhereEqualTo("MailchimpMemberId", memberToUpdate.Id);
+                var query = _collection.WhereEqualTo("MailchimpMemberId", memberToUpdate.id);
                 var querySnapshot = await query.GetSnapshotAsync();
+                var docId = querySnapshot.Documents.FirstOrDefault().Id;
                 var firestoreMember = querySnapshot.Documents.FirstOrDefault().ConvertTo<FirestoreMember>();
-                firestoreMember.MailchimpMemberInfo = memberToUpdate;
-                var docRef = _collection.Document(firestoreMember.Id);
+                firestoreMember.mailchimpMemberInfo = memberToUpdate;
+                var docRef = _collection.Document(docId);
                 await docRef.SetAsync(firestoreMember, SetOptions.Overwrite);
             }
         }

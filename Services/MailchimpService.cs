@@ -25,7 +25,7 @@ namespace mailchimp_firebase_sync.Services
             {
                 _logger.LogInformation("Getting all day chaperones...");
                 var results = await _mailchimpClient.GetAllDayChaperones();
-                _logger.LogInformation($"Got all day chaperones - count: {results.Members.Count()}");
+                _logger.LogInformation($"Got all day chaperones - count: {results.members.Count()}");
                 return results;
             }
             catch (Exception ex)
