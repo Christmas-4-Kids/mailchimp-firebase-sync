@@ -21,16 +21,74 @@ namespace mailchimp_firebase_sync.Services
 
         public async Task<MailchimpMembers> GetAllDayChaperones()
         {
+            var type = "all day chaperones";
             try
             {
-                _logger.LogInformation("Getting all day chaperones...");
+                _logger.LogInformation($"Getting {type}...");
                 var results = await _mailchimpClient.GetAllDayChaperones();
-                _logger.LogInformation($"Got all day chaperones - count: {results.members.Count()}");
+                _logger.LogInformation($"Got {type} - count: {results.members.Count()}");
                 return results;
             }
             catch (Exception ex)
             {
-                _logger.LogError("Something went wrong getting all day chaperones.");
+                _logger.LogError($"Something went wrong getting {type}.");
+                _logger.LogError(JsonConvert.SerializeObject(ex));
+                Console.WriteLine(ex);
+                return null;
+            }
+        }
+
+        public async Task<MailchimpMembers> GetEveningChaperones()
+        {
+            var type = "evening chaperones";
+            try
+            {
+                _logger.LogInformation($"Getting {type}...");
+                var results = await _mailchimpClient.GetEveningChaperones();
+                _logger.LogInformation($"Got {type} - count: {results.members.Count()}");
+                return results;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Something went wrong getting {type}.");
+                _logger.LogError(JsonConvert.SerializeObject(ex));
+                Console.WriteLine(ex);
+                return null;
+            }
+        }
+
+        public async Task<MailchimpMembers> GetLebanonChaperones()
+        {
+            var type = "Lebanon chaperones";
+            try
+            {
+                _logger.LogInformation($"Getting {type}...");
+                var results = await _mailchimpClient.GetLebanonChaperones();
+                _logger.LogInformation($"Got {type} - count: {results.members.Count()}");
+                return results;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Something went wrong getting {type}.");
+                _logger.LogError(JsonConvert.SerializeObject(ex));
+                Console.WriteLine(ex);
+                return null;
+            }
+        }
+
+        public async Task<MailchimpMembers> GetDrivers() 
+        {
+            var type = "drivers";
+            try
+            {
+                _logger.LogInformation($"Getting {type}...");
+                var results = await _mailchimpClient.GetDrivers();
+                _logger.LogInformation($"Got {type} - count: {results.members.Count()}");
+                return results;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Something went wrong getting {type}.");
                 _logger.LogError(JsonConvert.SerializeObject(ex));
                 Console.WriteLine(ex);
                 return null;

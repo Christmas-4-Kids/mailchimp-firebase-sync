@@ -31,7 +31,9 @@ namespace mailchimp_firebase_sync
             services.Configure<ExternalClientsConfig>(Configuration.GetSection("ExternalClients"));
 
             services.AddHttpClient<IMailchimpClient, MailchimpClient>();
-            
+
+            services.AddScoped<ICollection, Collection>();
+
             services.AddTransient<IMailchimpService, MailchimpService>();
             services.AddTransient<IFirestoreService, FirestoreService>();
             services.AddTransient<ISyncService, SyncService>();

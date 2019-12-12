@@ -6,5 +6,8 @@ namespace mailchimp_firebase_sync.Services
     public interface IMailchimpService
     {
         Task<MailchimpMembers> GetAllDayChaperones();
+        Task<MailchimpMembers> GetEveningChaperones();
+        Task<MailchimpMembers> GetLebanonChaperones();
+        Task<MailchimpMembers> GetDrivers();
     }
 }

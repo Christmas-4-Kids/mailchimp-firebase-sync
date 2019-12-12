@@ -11,6 +11,7 @@ namespace mailchimp_firebase_sync.Converters
         }
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
+            if (reader.Value == null || reader.Value.ToString() == string.Empty) return false;
             switch (reader.Value.ToString().ToLower().Trim())
             {
                 case "true":
@@ -23,10 +24,9 @@ namespace mailchimp_firebase_sync.Converters
                 case "n":
                 case "0":
                     return false;
+                default:
+                    return true;
             }
-
-            // If we reach here, we're pretty much going to throw an error so let's let Json.NET throw it's pretty-fied error message.
-            return new JsonSerializer().Deserialize(reader, objectType);
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)

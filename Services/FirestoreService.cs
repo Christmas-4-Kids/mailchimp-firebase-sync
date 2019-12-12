@@ -14,12 +14,13 @@ namespace mailchimp_firebase_sync.Services
     public class FirestoreService : IFirestoreService
     {
         private readonly FirestoreDb _db;
-        private readonly CollectionReference _collection;
         private ILogger<FirestoreService> _logger;
+        private readonly ICollection _collection;
 
-        public FirestoreService(ILogger<FirestoreService> logger)
+        public FirestoreService(ILogger<FirestoreService> logger, ICollection collection)
         {
             _logger = logger;
+            _collection = collection;
             try
             {
                 _logger.LogInformation("Setting firestore credentials and getting initial collection...");
@@ -28,7 +29,6 @@ namespace mailchimp_firebase_sync.Services
                     CredentialsPath = @$"{Directory.GetCurrentDirectory()}\c4k-events-credentials.json"
                 };
                 _db = FirestoreDb.Create("c4k-events", firestoreClientBuilder.Build());
-                _collection = _db.Collection("members");
             }
             catch (Exception ex)
             {
@@ -40,6 +40,7 @@ namespace mailchimp_firebase_sync.Services
         }
         public async Task CreateMemberAsync(MailchimpMember mailchimpMember)
         {
+            var collection = _db.Collection(_collection.GetName());
             var firestoreMember = new FirestoreMember()
             {
                 id = Guid.NewGuid().ToString(),
@@ -58,7 +59,7 @@ namespace mailchimp_firebase_sync.Services
             };
             try
             {
-                _ = await _collection.AddAsync(firestoreMember);
+                _ = await collection.AddAsync(firestoreMember);
             }
             catch (Exception ex)
             {
@@ -80,9 +81,10 @@ namespace mailchimp_firebase_sync.Services
         {
             try
             {
+                var collection = _db.Collection(_collection.GetName());
                 _logger.LogInformation($"Getting all firestore members from collection...");
                 var firestoreMemberList = new List<FirestoreMember>();
-                var docs = _collection.ListDocumentsAsync();
+                var docs = collection.ListDocumentsAsync();
                 var docRefList = await docs.ToList();
                 _logger.LogInformation($"Got docRefList from collection.");
                 foreach (var docRef in docRefList)
@@ -113,7 +115,8 @@ namespace mailchimp_firebase_sync.Services
 
         public async Task<FirestoreMember> GetMemberByEmailAndPhoneAsync(string email, string phone)
         {
-            var query = _collection.WhereEqualTo("Email", email);
+            var collection = _db.Collection(_collection.GetName());
+            var query = collection.WhereEqualTo("Email", email);
             var querySnapshot = await query.GetSnapshotAsync();
             var foundFirestoreMembers = new List<FirestoreMember>();
             foreach (var queryResult in querySnapshot.Documents)
@@ -134,7 +137,8 @@ namespace mailchimp_firebase_sync.Services
 
         public async Task<FirestoreMember> GetMemberByIdAsync(string id)
         {
-            var doc = _collection.Document(id);
+            var collection = _db.Collection(_collection.GetName());
+            var doc = collection.Document(id);
             var docSnapshot = await doc.GetSnapshotAsync();
             var firestoreMember = docSnapshot.ConvertTo<FirestoreMember>();
 
@@ -143,30 +147,32 @@ namespace mailchimp_firebase_sync.Services
 
         public async Task RemoveMailchimpInfoForMultipleMembersAsync(List<string> membersToRemoveMailchimpInfo)
         {
+            var collection = _db.Collection(_collection.GetName());
             _logger.LogInformation($"Removing {membersToRemoveMailchimpInfo.Count()} members.");
             foreach (var memberToRemove in membersToRemoveMailchimpInfo)
             {
-                var query = _collection.WhereEqualTo("MailchimpMemberId", memberToRemove);
+                var query = collection.WhereEqualTo("MailchimpMemberId", memberToRemove);
                 var querySnapshot = await query.GetSnapshotAsync();
                 var docId = querySnapshot.Documents.FirstOrDefault().Id;
                 var firestoreMember = querySnapshot.Documents.FirstOrDefault().ConvertTo<FirestoreMember>();
                 firestoreMember.mailchimpMemberInfo = null;
-                var docRef = _collection.Document(docId);
+                var docRef = collection.Document(docId);
                 await docRef.SetAsync(firestoreMember, SetOptions.Overwrite);
             }
         }
 
         public async Task UpdateMultipleMembersAsync(List<MailchimpMember> membersToUpdate)
         {
+            var collection = _db.Collection(_collection.GetName());
             _logger.LogInformation($"Updating {membersToUpdate.Count()} members.");
             foreach (var memberToUpdate in membersToUpdate)
             {
-                var query = _collection.WhereEqualTo("MailchimpMemberId", memberToUpdate.id);
+                var query = collection.WhereEqualTo("MailchimpMemberId", memberToUpdate.id);
                 var querySnapshot = await query.GetSnapshotAsync();
                 var docId = querySnapshot.Documents.FirstOrDefault().Id;
                 var firestoreMember = querySnapshot.Documents.FirstOrDefault().ConvertTo<FirestoreMember>();
                 firestoreMember.mailchimpMemberInfo = memberToUpdate;
-                var docRef = _collection.Document(docId);
+                var docRef = collection.Document(docId);
                 await docRef.SetAsync(firestoreMember, SetOptions.Overwrite);
             }
         }

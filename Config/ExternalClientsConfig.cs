@@ -8,6 +8,9 @@
     {
         public string BaseUrl { get; set; }
         public string AllDayChaperonesEndpoint { get; set; }
+        public string EveningChaperonesEndpoint { get; set; }
+        public string LebanonChaperonesEndpoint { get; set; }
+        public string DriversEndpoint { get; set; }
         public string ApiKey { get; set; }
     }
 }

@@ -16,7 +16,10 @@ namespace mailchimp_firebase_sync.ExternalClients
         private readonly ILogger<MailchimpClient> _logger;
         private readonly HttpClient _httpClient;
         private readonly string _allDayChaperonesEndpoint;
+        private readonly string _eveningChaperonesEndpoint;
         private readonly JsonSerializerSettings _snakeCaseSerializer;
+        private readonly string _lebanonChaperonesEndpoint;
+        private readonly string _driversEndpoint;
 
         public MailchimpClient(HttpClient httpClient, IOptions<ExternalClientsConfig> externalClientsConfig, ILogger<MailchimpClient> logger)
         {
@@ -29,6 +32,9 @@ namespace mailchimp_firebase_sync.ExternalClients
             _httpClient.BaseAddress = new Uri(externalClientsConfig.Value.MailchimpApi.BaseUrl);
             _logger.LogInformation($"Setting baseAddress: {_httpClient.BaseAddress}");
             _allDayChaperonesEndpoint = externalClientsConfig.Value.MailchimpApi.AllDayChaperonesEndpoint;
+            _eveningChaperonesEndpoint = externalClientsConfig.Value.MailchimpApi.EveningChaperonesEndpoint;
+            _lebanonChaperonesEndpoint = externalClientsConfig.Value.MailchimpApi.LebanonChaperonesEndpoint;
+            _driversEndpoint = externalClientsConfig.Value.MailchimpApi.DriversEndpoint;
             _logger.LogInformation($"Setting allDayChaperones Endpoint: {_allDayChaperonesEndpoint}");
             var contractResolver = new DefaultContractResolver
             {
@@ -43,20 +49,40 @@ namespace mailchimp_firebase_sync.ExternalClients
 
         public async Task<MailchimpMembers> GetAllDayChaperones()
         {
+            return await GetEndpoint(_allDayChaperonesEndpoint, "All Day Chaperones");
+        }
+
+        public async Task<MailchimpMembers> GetEveningChaperones()
+        {
+            return await GetEndpoint(_eveningChaperonesEndpoint, "Evening Chaperones");
+        }
+
+        public async Task<MailchimpMembers> GetLebanonChaperones()
+        {
+            return await GetEndpoint(_lebanonChaperonesEndpoint, "Lebanon Chaperones");
+        }
+
+        public async Task<MailchimpMembers> GetDrivers()
+        {
+            return await GetEndpoint(_driversEndpoint, "Drivers");
+        }
+
+        private async Task<MailchimpMembers> GetEndpoint(string endpoint, string endpointName)
+        {
             try
             {
-                var allDayChaperonesUrl = new Uri(_allDayChaperonesEndpoint, UriKind.Relative);
-                _logger.LogInformation($"Getting allDayChaperones from uri: {allDayChaperonesUrl}");
-                var result = await _httpClient.GetAsync(allDayChaperonesUrl);
+                var url = new Uri(endpoint, UriKind.Relative);
+                _logger.LogInformation($"Getting {endpointName} from uri: {url}");
+                var result = await _httpClient.GetAsync(url);
                 result.EnsureSuccessStatusCode();
                 var strResult = await result.Content.ReadAsStringAsync();
-                _logger.LogInformation($"Got allDayChaperones.");
+                _logger.LogInformation($"Got {endpointName}.");
                 _logger.LogInformation($"Converting to MailchimpMembers and returning...");
                 return JsonConvert.DeserializeObject<MailchimpMembers>(strResult, _snakeCaseSerializer);
             }
             catch (Exception ex)
             {
-                _logger.LogError("Something went wrong getting all day chaperones.");
+                _logger.LogError($"Something went wrong getting {endpointName}.");
                 _logger.LogError(JsonConvert.SerializeObject(ex));
                 return null;
             }

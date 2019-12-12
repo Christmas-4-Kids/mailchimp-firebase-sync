@@ -21,5 +21,23 @@ namespace mailchimp_firebase_sync.Controllers
             var results = await _mailchimpService.GetAllDayChaperones();
             return results;
         }
+        [HttpGet("evening-chaperones")]
+        public async Task<MailchimpMembers> GetEveningChaperones()
+        {
+            var results = await _mailchimpService.GetEveningChaperones();
+            return results;
+        }
+        [HttpGet("lebanon-chaperones")]
+        public async Task<MailchimpMembers> GetLebanonChaperones()
+        {
+            var results = await _mailchimpService.GetLebanonChaperones();
+            return results;
+        }
+        [HttpGet("drivers")]
+        public async Task<MailchimpMembers> GetDrivers()
+        {
+            var results = await _mailchimpService.GetDrivers();
+            return results;
+        }
     }
 }

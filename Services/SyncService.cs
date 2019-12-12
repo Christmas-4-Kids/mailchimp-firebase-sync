@@ -13,19 +13,28 @@ namespace mailchimp_firebase_sync.Services
         private readonly IMailchimpService _mailchimpService;
         private readonly IFirestoreService _firestoreService;
         private readonly ILogger<SyncService> _logger;
+        private readonly ICollection _collection;
 
-        public SyncService(IMailchimpService mailchimpService, IFirestoreService firestoreService, ILogger<SyncService> logger)
+        public SyncService(IMailchimpService mailchimpService, IFirestoreService firestoreService, ILogger<SyncService> logger, ICollection collection)
         {
             _mailchimpService = mailchimpService;
             _firestoreService = firestoreService;
             _logger = logger;
+            _collection = collection;
         }
         public async Task SyncMailchimpMembersWithFirestoreAsync()
         {
             try
             {
+                var mailchimpMembers = _collection.GetName() switch
+                {
+                    Constants.AllDayChaperones => await _mailchimpService.GetAllDayChaperones(),
+                    Constants.EveningChaperones => await _mailchimpService.GetEveningChaperones(),
+                    Constants.LebanonChaperones => await _mailchimpService.GetLebanonChaperones(),
+                    Constants.Drivers => await _mailchimpService.GetDrivers(),
+                    _ => null
+                };
                 _logger.LogInformation("Starting Sync...");
-                var allDayChaperones = await _mailchimpService.GetAllDayChaperones();
                 var firestoreMembers = await _firestoreService.GetAllFirestoreMembersAsync();
 
                 var membersToUpdate = new List<MailchimpMember>();
@@ -33,11 +42,11 @@ namespace mailchimp_firebase_sync.Services
                 var membersToRemoveMailchimpInfo = new List<string>();
                 var firestoreMemberMailchimpMemberIdsFound = new List<string>();
 
-                foreach (var allDayChaperone in allDayChaperones.members)
+                foreach (var member in mailchimpMembers.members)
                 {
-                    var lastUpdatedInMailchimp = DateTime.Parse(allDayChaperone.lastChanged);
+                    var lastUpdatedInMailchimp = DateTime.Parse(member.lastChanged);
 
-                    var matchingFirestoreMember = firestoreMembers.FirstOrDefault(m => m.mailchimpMemberId == allDayChaperone.id);
+                    var matchingFirestoreMember = firestoreMembers.FirstOrDefault(m => m.mailchimpMemberId == member.id);
 
                     if (matchingFirestoreMember != null)
                     {
@@ -45,14 +54,14 @@ namespace mailchimp_firebase_sync.Services
                         var lastUpdatedInFirestore = DateTime.Parse(matchingFirestoreMember.lastUpdated);
                         if (lastUpdatedInMailchimp > lastUpdatedInFirestore)
                         {
-                            _logger.LogInformation($"Found mailchimp member to update: {allDayChaperone.id}");
-                            membersToUpdate.Add(allDayChaperone);
+                            _logger.LogInformation($"Found mailchimp member to update: {member.id}");
+                            membersToUpdate.Add(member);
                         }
                     }
                     else
                     {
-                        _logger.LogInformation($"Found mailchimp member to add: {allDayChaperone.id}");
-                        membersToAdd.Add(allDayChaperone);
+                        _logger.LogInformation($"Found mailchimp member to add: {member.id}");
+                        membersToAdd.Add(member);
                     }
                 }
                 var existingFirestoreMailchimpMemberIds = firestoreMembers.Select(m => m.mailchimpMemberId).ToList();

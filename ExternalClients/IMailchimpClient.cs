@@ -6,5 +6,8 @@ namespace mailchimp_firebase_sync.ExternalClients
     public interface IMailchimpClient
     {
         Task<MailchimpMembers> GetAllDayChaperones();
+        Task<MailchimpMembers> GetEveningChaperones();
+        Task<MailchimpMembers> GetLebanonChaperones();
+        Task<MailchimpMembers> GetDrivers();
     }
 }
